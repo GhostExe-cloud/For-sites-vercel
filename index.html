@@ -26,59 +26,65 @@
             justify-content: center;
             min-height: 100vh;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Abstract Background Glows */
-        .glow {
+        /* --- SNOWFLAKE ANIMATION --- */
+        .snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicking through snowflakes */
+            z-index: 2;
+        }
+
+        .snowflake {
             position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 0;
+            top: -10px;
+            color: white;
+            font-size: 1em;
+            user-select: none;
+            cursor: default;
+            opacity: 0.8;
+            filter: blur(1px);
+            animation: fall linear infinite;
         }
 
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* --- UI DESIGN --- */
         .main-container {
             position: relative;
-            z-index: 1;
+            z-index: 10;
             text-align: center;
             width: 100%;
             max-width: 600px;
-            padding: 20px;
         }
 
         .hero-title {
-            font-size: clamp(3.5rem, 12vw, 6.5rem);
+            font-size: clamp(3.5rem, 12vw, 6rem);
             font-weight: 800;
             letter-spacing: -0.05em;
-            background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.2) 100%);
+            background: linear-gradient(180deg, #fff 40%, rgba(255,255,255,0.1) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-            animation: fadeInDown 1s ease-out;
+            margin-bottom: 10px;
         }
 
-        .sub-text {
-            color: #777;
-            font-size: 1.1rem;
-            margin-bottom: 50px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            animation: fadeIn 1.5s ease-out;
-        }
-
-        /* --- THE LIQUID BUTTON SYSTEM --- */
         .liquid-wrapper {
             position: relative;
             width: 320px;
             height: 90px;
-            margin: 0 auto;
+            margin: 40px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            filter: url('#gooey'); /* The Magic Filter */
+            filter: url('#gooey');
         }
 
         .liquid-container {
@@ -88,7 +94,6 @@
             border: 1px solid var(--border);
             border-radius: 45px;
             overflow: hidden;
-            z-index: 1;
         }
 
         .milk-fill {
@@ -98,71 +103,39 @@
             width: 100%;
             height: 100%;
             background: #fff;
-            transform: translateY(82%); /* Default level */
-            transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+            transform: translateY(85%); /* Starting height */
+            transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .download-btn {
             position: relative;
-            z-index: 5;
+            z-index: 20;
             background: #fff;
             color: #000;
-            padding: 18px 45px;
+            padding: 16px 40px;
             border-radius: 40px;
             font-weight: 800;
-            font-size: 1rem;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 12px;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+            gap: 10px;
+            transition: 0.3s;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .download-btn:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 15px 40px rgba(255,255,255,0.1);
-        }
+        .download-btn:hover { transform: scale(1.05); }
 
-        /* Stats Section */
-        .stats-area {
-            margin-top: 40px;
-            font-family: 'JetBrains Mono', monospace;
-            animation: fadeInUp 1s ease-out 0.5s both;
-        }
-
-        .stats-label {
-            color: #444;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .count-number {
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: #fff;
-        }
-
-        /* Animations */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+        .stats-area { margin-top: 30px; font-family: 'JetBrains Mono', monospace; }
+        .count-number { font-size: 1.5rem; color: #fff; display: block; }
+        
         svg { width: 0; height: 0; position: absolute; }
     </style>
 </head>
 <body>
 
-    <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <div class="snow-container" id="snow"></div>
+
+    <svg>
         <defs>
             <filter id="gooey">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
@@ -172,77 +145,79 @@
         </defs>
     </svg>
 
-    <div class="glow"></div>
-
     <div class="main-container">
         <h1 class="hero-title">PROVOID</h1>
-        <p class="sub-text">Execute with Precision</p>
-
+        
         <div class="liquid-wrapper">
             <div class="liquid-container">
                 <div class="milk-fill" id="milk-fill"></div>
             </div>
-            
             <a href="#" class="download-btn" onclick="handleDownload(event)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 DOWNLOAD NOW
             </a>
         </div>
 
         <div class="stats-area">
-            <span class="stats-label">Live Deployments</span>
-            <span class="count-number" id="download-count">——</span>
+            <span style="color: #444; font-size: 0.8rem; letter-spacing: 2px;">LIVE STATS</span>
+            <span class="count-number" id="download-count">0</span>
         </div>
     </div>
 
     <script>
-        // --- 1. SETTINGS ---
+        // --- SNOW GENERATOR ---
+        function createSnow() {
+            const container = document.getElementById('snow');
+            const snowflakeCount = 50; // Number of snowflakes
+
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snow = document.createElement('div');
+                snow.className = 'snowflake';
+                snow.innerHTML = '●'; // Soft round snowflake
+                
+                // Randomize position and speed
+                const size = Math.random() * 5 + 2 + 'px';
+                const left = Math.random() * 100 + 'vw';
+                const duration = Math.random() * 10 + 5 + 's'; // Falling speed (slow)
+                const delay = Math.random() * 5 + 's';
+                const opacity = Math.random() * 0.5 + 0.2;
+
+                snow.style.left = left;
+                snow.style.fontSize = size;
+                snow.style.animationDuration = duration;
+                snow.style.animationDelay = delay;
+                snow.style.opacity = opacity;
+
+                container.appendChild(snow);
+            }
+        }
+        createSnow();
+
+        // --- DATABASE LOGIC ---
         const SUPABASE_URL = 'YOUR_SUPABASE_URL';
         const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const EXE_LINK = 'YOUR_DIRECT_EXE_LINK';
+        const EXE_LINK = 'YOUR_LINK.EXE';
 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- 2. LOGIC ---
-        async function fetchAndUpdateStats() {
-            const { count, error } = await supabase
-                .from('download_stats')
-                .select('*', { count: 'exact', head: true });
-
-            if (!error) {
-                const countElem = document.getElementById('download-count');
-                const fillElem = document.getElementById('milk-fill');
-                
-                countElem.innerText = count.toLocaleString();
-                
-                // Adjust the milk level based on downloads
-                // (Starts at 82% translated Y, moves up to 40% Y)
-                let newLevel = Math.max(82 - (count * 0.5), 40); 
-                fillElem.style.transform = `translateY(${newLevel}%)`;
+        async function updateStats() {
+            const { count } = await supabase.from('download_stats').select('*', { count: 'exact', head: true });
+            if (count !== null) {
+                document.getElementById('download-count').innerText = count.toLocaleString();
+                // Milk rises 1% per 2 downloads
+                let level = Math.max(85 - (count * 0.5), 35);
+                document.getElementById('milk-fill').style.transform = `translateY(${level}%)`;
             }
         }
 
         async function handleDownload(e) {
             e.preventDefault();
-            
-            // Hit the Vercel API we created in api/increment.js
-            fetch('/api/increment');
-
-            // Start actual download
+            fetch('/api/increment'); // Vercel API Call
             window.location.href = EXE_LINK;
         }
 
-        // --- 3. REALTIME SYNC ---
-        // This makes the number change live for everyone without refreshing
-        supabase
-            .channel('stats-changes')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'download_stats' }, () => {
-                fetchAndUpdateStats();
-            })
-            .subscribe();
-
-        // Initial Load
-        fetchAndUpdateStats();
+        // Realtime update
+        supabase.channel('stats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'download_stats' }, () => updateStats()).subscribe();
+        updateStats();
     </script>
 </body>
 </html>
