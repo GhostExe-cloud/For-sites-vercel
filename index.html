@@ -11,13 +11,11 @@
             --bg-color: #030303;
             --text-color: #ffffff;
             --accent-color: #ffffff;
-            --secondary-accent: #1a1a1a;
             --card-bg: rgba(15, 15, 15, 0.6);
             --border-color: rgba(255, 255, 255, 0.1);
-            --glow: rgba(255, 255, 255, 0.05);
         }
         
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         
         body {
             background-color: var(--bg-color);
@@ -27,86 +25,77 @@
         }
 
         /* --- BACKGROUND & SNOW --- */
-        #snow-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .bg-glow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% -20%, rgba(255,255,255,0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 0% 100%, rgba(255,255,255,0.03) 0%, transparent 40%);
-            z-index: -1;
-        }
+        #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% -20%, rgba(255,255,255,0.08) 0%, transparent 50%); z-index: -1; }
 
         .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; position: relative; z-index: 10; }
         
         /* --- HEADER --- */
-        header { padding: 2rem 0; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); transition: all 0.3s ease; border-bottom: 1px solid transparent; }
-        header.scrolled { border-bottom: 1px solid var(--border-color); background: rgba(3, 3, 3, 0.8); }
+        header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-color); background: rgba(3,3,3,0.7); }
         nav { display: flex; justify-content: space-between; align-items: center; }
-        
-        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: transform 0.3s ease; }
-        .logo:hover { transform: translateX(5px); }
-        .logo-dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 15px #fff; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.8; } }
+        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: default; }
+        .logo-dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 15px #fff; }
 
-        .nav-links { display: flex; list-style: none; gap: 2.5rem; }
-        .nav-links a { color: #888; text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: all 0.3s ease; position: relative; }
+        .nav-links { display: flex; list-style: none; gap: 2rem; align-items: center; }
+        .nav-links a { color: #888; text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: 0.3s; }
         .nav-links a:hover { color: #fff; }
-        .nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: #fff; transition: width 0.3s ease; }
-        .nav-links a:hover::after { width: 100%; }
+
+        /* --- BUTTONS --- */
+        .btn { padding: 0.8rem 1.8rem; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; }
+        .btn-primary { background: #fff; color: #000; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,255,255,0.15); }
+        .btn-discord { background: #5865F2; color: #fff; }
+        .btn-discord:hover { background: #4752C4; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(88,101,242,0.2); }
 
         /* --- HERO --- */
-        .hero { padding: 8rem 0 4rem; text-align: center; }
+        .hero { padding: 7rem 0 4rem; text-align: center; }
         .hero h1 { font-size: clamp(3rem, 8vw, 5rem); font-weight: 800; letter-spacing: -3px; line-height: 1; margin-bottom: 1.5rem; background: linear-gradient(180deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 1.2rem; color: #888; max-width: 600px; margin: 0 auto 3rem auto; }
-
-        .main-cta { background: #fff; color: #000; border: none; padding: 1.2rem 2.5rem; border-radius: 12px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-flex; align-items: center; gap: 12px; position: relative; overflow: hidden; text-decoration: none; }
-        .main-cta:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(255,255,255,0.2); }
-        .version-tag { display: block; margin-top: 1rem; color: #444; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+        .cta-group { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; }
 
         /* --- SLIDER --- */
         .preview-container { margin-top: 5rem; position: relative; }
-        .slider-wrapper { position: relative; padding: 10px; background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%); border-radius: 20px; border: 1px solid var(--border-color); overflow: hidden; }
+        .slider-wrapper { padding: 8px; background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px solid var(--border-color); overflow: hidden; position: relative; }
         .slider-container { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 12px; background: #000; }
-        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.5s ease-in-out; display: flex; align-items: center; justify-content: center; }
+        .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease; display: flex; align-items: center; justify-content: center; }
         .slide.active { opacity: 1; }
         .slide img { width: 100%; height: 100%; object-fit: contain; }
-        .slide-label { position: absolute; top: 2rem; left: 2rem; background: rgba(0,0,0,0.8); padding: 0.6rem 1.2rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #fff; border: 1px solid rgba(255,255,255,0.1); z-index: 10; }
+        .slide-label { position: absolute; top: 1.5rem; left: 1.5rem; background: rgba(0,0,0,0.8); padding: 6px 14px; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 0.75rem; border: 1px solid var(--border-color); }
 
-        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; transition: all 0.3s ease; color: #fff; font-size: 1.5rem; }
-        .slider-arrow:hover { background: rgba(255,255,255,0.2); transform: translateY(-50%) scale(1.1); }
-        .prev { left: 2rem; }
-        .next { right: 2rem; }
+        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; color: #fff; font-size: 1.2rem; border: 1px solid var(--border-color); backdrop-filter: blur(5px); }
+        .prev { left: 20px; } .next { right: 20px; }
 
-        /* --- FEATURES --- */
-        .features { padding: 10rem 0; }
-        .section-header { text-align: center; margin-bottom: 5rem; }
-        .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .feature-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2.5rem; transition: all 0.3s ease; backdrop-filter: blur(5px); position: relative; }
-        .feature-card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-10px); background: rgba(20,20,20,0.8); }
-        .feature-icon { margin-bottom: 1.5rem; color: #fff; }
+        /* --- MODERN TECH STACK --- */
+        .tech-stack { padding: 6rem 0; text-align: center; }
+        .tech-items { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 3rem; }
+        .tech-item { 
+            padding: 1.2rem 2.2rem; 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            font-family: 'JetBrains Mono'; 
+            cursor: default; /* Normal cursor */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: float 5s ease-in-out infinite;
+        }
+        /* Hover "Pop" Effect */
+        .tech-item:hover {
+            transform: scale(1.1) translateY(-5px) !important;
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+            color: #fff;
+        }
 
-        /* --- TECH STACK & FOOTER --- */
-        .tech-stack { padding: 8rem 0; text-align: center; }
-        .tech-items { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 3rem; }
-        .tech-item { padding: 0.8rem 1.5rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 0.9rem; }
-        
-        footer { padding: 4rem 0; text-align: center; border-top: 1px solid var(--border-color); color: #444; font-size: 0.8rem; }
-        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
-        .footer-links a { color: #666; text-decoration: none; transition: 0.3s; }
-        .footer-links a:hover { color: #fff; }
+        .tech-item:nth-child(2) { animation-delay: 1s; }
+        .tech-item:nth-child(3) { animation-delay: 2s; }
+        .tech-item:nth-child(4) { animation-delay: 0.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        footer { padding: 4rem 0; text-align: center; border-top: 1px solid var(--border-color); opacity: 0.6; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -114,16 +103,17 @@
     <canvas id="snow-canvas"></canvas>
     <div class="bg-glow"></div>
 
-    <header id="header">
+    <header>
         <div class="container">
             <nav>
                 <div class="logo"><div class="logo-dot"></div> PROVOID</div>
                 <ul class="nav-links">
                     <li><a href="#features">Architecture</a></li>
                     <li><a href="#tech">Technology</a></li>
-                    <li><a href="https://github.com" target="_blank">Github</a></li>
+                    <li><a href="https://discord.gg/mG2QCJRTJK" target="_blank">GitHub</a></li>
+                    <li><a href="https://discord.gg/mG2QCJRTJK" target="_blank">Discord</a></li>
                 </ul>
-                <button class="main-cta" style="padding: 0.6rem 1.2rem; font-size: 0.85rem;" onclick="handleDownload()">Download</button>
+                <a href="#" class="btn btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">Download</a>
             </nav>
         </div>
     </header>
@@ -131,31 +121,29 @@
     <section class="hero">
         <div class="container">
             <h1>EXECUTE<br>WITHOUT LIMITS.</h1>
-            <p>The next evolution in task automation. Built for speed, designed for stability.</p>
+            <p>High-performance task automation. Built for speed, designed for stability.</p>
             
-            <div>
-                <button class="main-cta" onclick="handleDownload()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-                    </svg>
-                    Download ProVoid
-                </button>
-                <span class="version-tag">v2.0.4-stable | Windows 10/11</span>
+            <div class="cta-group">
+                <a href="#" class="btn btn-primary">Download v2.0.4</a>
+                <a href="https://discord.gg/mG2QCJRTJK" class="btn btn-discord" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.069.069 0 0 0-.032.027C.533 9.048-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.196.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                    Join Discord
+                </a>
             </div>
 
             <div class="preview-container">
                 <div class="slider-wrapper">
                     <div class="slider-container" id="slider">
                         <div class="slide active">
-                            <div class="slide-label">Home Dashboard</div>
-                            <img src="https://raw.githubusercontent.com/GhostExe-cloud/For-sites-vercel/main/image_2026-01-03_094545779.png" alt="Home">
+                            <div class="slide-label">DASHBOARD INTERFACE</div>
+                            <img src="https://raw.githubusercontent.com/GhostExe-cloud/For-sites-vercel/main/image_2026-01-03_094545779.png" alt="Dashboard">
                         </div>
                         <div class="slide">
-                            <div class="slide-label">Script Hub</div>
+                            <div class="slide-label">SCRIPT HUB</div>
                             <img src="https://raw.githubusercontent.com/GhostExe-cloud/For-sites-vercel/main/image_2026-01-03_094617110.png" alt="Scripts">
                         </div>
                         <div class="slide">
-                            <div class="slide-label">Script Editor</div>
+                            <div class="slide-label">LUA EDITOR</div>
                             <img src="https://raw.githubusercontent.com/GhostExe-cloud/For-sites-vercel/main/image_2026-01-03_094726616.png" alt="Editor">
                         </div>
                     </div>
@@ -166,35 +154,9 @@
         </div>
     </section>
 
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-header">
-                <h2>Built for Performance</h2>
-                <p>Every feature engineered for maximum efficiency</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Ultra-Fast API</h3>
-                    <p>Leveraging the Quorum API for industry-leading execution speeds.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Ironclad Security</h3>
-                    <p>Encrypted environment ensuring your scripts and data remain private.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛠️</div>
-                    <h3>Advanced Scripting</h3>
-                    <p>Full Lua 5.1 support with extensive custom libraries.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section class="tech-stack" id="tech">
         <div class="container">
-            <h2>Modern Tech Stack</h2>
+            <h2 style="font-size: 2rem; letter-spacing: -1px;">Modern Tech Stack</h2>
             <div class="tech-items">
                 <div class="tech-item">WPF / WindowChrome</div>
                 <div class="tech-item">Quorum API</div>
@@ -206,17 +168,12 @@
 
     <footer>
         <div class="container">
-            <div class="footer-links">
-                <a href="#">Documentation</a>
-                <a href="#">Discord</a>
-                <a href="#">Terms</a>
-            </div>
-            <p>&copy; 2026 PROVOID ARCHITECTURE. ALL RIGHTS RESERVED.</p>
+            <p>&copy; 2026 PROVOID ARCHITECTURE. DEVELOPED BY GHOSTEXE.</p>
         </div>
     </footer>
 
     <script>
-        // --- SNOW ANIMATION ---
+        // SNOW
         const canvas = document.getElementById('snow-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -229,7 +186,7 @@
         }
         function drawSnow() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
             ctx.beginPath();
             particles.forEach(p => {
                 ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -240,26 +197,28 @@
         window.addEventListener('resize', initSnow);
         initSnow(); drawSnow();
 
-        // --- SLIDER LOGIC ---
+        // SLIDER WITH AUTO-ROTATE
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
+        let slideInterval;
+
         function moveSlide(step) {
             slides[currentSlide].classList.remove('active');
             currentSlide = (currentSlide + step + slides.length) % slides.length;
             slides[currentSlide].classList.add('active');
+            resetTimer(); 
         }
 
-        // --- UTILS ---
-        window.addEventListener('scroll', () => {
-            const header = document.getElementById('header');
-            if (window.scrollY > 50) header.classList.add('scrolled');
-            else header.classList.remove('scrolled');
-        });
-
-        function handleDownload() {
-            alert("Downloading ProVoid v2.0.4...");
-            // window.location.href = "YOUR_LINK_HERE";
+        function startTimer() {
+            slideInterval = setInterval(() => moveSlide(1), 5000);
         }
+
+        function resetTimer() {
+            clearInterval(slideInterval);
+            startTimer();
+        }
+
+        startTimer();
     </script>
 </body>
 </html>
