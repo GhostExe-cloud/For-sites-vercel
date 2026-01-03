@@ -3,99 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProVoid | Execute with Precision</title>
+    <title>ProVoid | Architecture & Precision</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #030303;
-            --text-color: #ffffff;
-            --accent-color: #ffffff;
-            --card-bg: rgba(15, 15, 15, 0.6);
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bg: #030303;
+            --text: #ffffff;
+            --accent: #ffffff;
+            --border: rgba(255, 255, 255, 0.1);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        /* --- BACKGROUND & SNOW --- */
-        #snow-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% -20%, rgba(255,255,255,0.08) 0%, transparent 50%); z-index: -1; }
+        /* Background & Snow */
+        #snow-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+        .bg-glow { position: fixed; inset: 0; background: radial-gradient(circle at 50% -20%, rgba(255,255,255,0.08) 0%, transparent 50%); z-index: -1; }
 
         .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; position: relative; z-index: 10; }
         
-        /* --- HEADER --- */
-        header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-color); background: rgba(3,3,3,0.7); }
+        /* Navigation */
+        header { padding: 1.5rem 0; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); background: rgba(3,3,3,0.7); }
         nav { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: default; }
         .logo-dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 15px #fff; }
-
-        .nav-links { display: flex; list-style: none; gap: 2rem; align-items: center; }
-        .nav-links a { color: #888; text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: 0.3s; }
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a { color: #888; text-decoration: none; font-size: 0.9rem; transition: 0.3s; font-weight: 500; }
         .nav-links a:hover { color: #fff; }
 
-        /* --- BUTTONS --- */
-        .btn { padding: 0.8rem 1.8rem; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; }
+        /* Hero & Content */
+        .hero { padding: 8rem 0 4rem; text-align: center; }
+        .hero h1 { font-size: clamp(3rem, 8vw, 5rem); font-weight: 800; letter-spacing: -3px; margin-bottom: 1.5rem; background: linear-gradient(180deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .btn { padding: 0.8rem 1.8rem; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
         .btn-primary { background: #fff; color: #000; }
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,255,255,0.15); }
-        .btn-discord { background: #5865F2; color: #fff; }
-        .btn-discord:hover { background: #4752C4; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(88,101,242,0.2); }
 
-        /* --- HERO --- */
-        .hero { padding: 7rem 0 4rem; text-align: center; }
-        .hero h1 { font-size: clamp(3rem, 8vw, 5rem); font-weight: 800; letter-spacing: -3px; line-height: 1; margin-bottom: 1.5rem; background: linear-gradient(180deg, #fff 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .cta-group { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; }
-
-        /* --- SLIDER --- */
-        .preview-container { margin-top: 5rem; position: relative; }
-        .slider-wrapper { padding: 8px; background: rgba(255,255,255,0.05); border-radius: 20px; border: 1px solid var(--border-color); overflow: hidden; position: relative; }
-        .slider-container { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; border-radius: 12px; background: #000; }
-        .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease; display: flex; align-items: center; justify-content: center; }
-        .slide.active { opacity: 1; }
-        .slide img { width: 100%; height: 100%; object-fit: contain; }
-        .slide-label { position: absolute; top: 1.5rem; left: 1.5rem; background: rgba(0,0,0,0.8); padding: 6px 14px; border-radius: 6px; font-family: 'JetBrains Mono'; font-size: 0.75rem; border: 1px solid var(--border-color); }
-
-        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; color: #fff; font-size: 1.2rem; border: 1px solid var(--border-color); backdrop-filter: blur(5px); }
-        .prev { left: 20px; } .next { right: 20px; }
-
-        /* --- MODERN TECH STACK --- */
+        /* Tech Stack Section */
         .tech-stack { padding: 6rem 0; text-align: center; }
         .tech-items { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 3rem; }
         .tech-item { 
-            padding: 1.2rem 2.2rem; 
-            background: var(--card-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 12px; 
-            font-family: 'JetBrains Mono'; 
-            cursor: default; /* Normal cursor */
+            padding: 1.2rem 2.2rem; background: rgba(15,15,15,0.6); border: 1px solid var(--border); 
+            border-radius: 12px; font-family: 'JetBrains Mono'; cursor: default;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: float 5s ease-in-out infinite;
         }
-        /* Hover "Pop" Effect */
-        .tech-item:hover {
-            transform: scale(1.1) translateY(-5px) !important;
-            border-color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
-            color: #fff;
+        .tech-item:hover { transform: scale(1.1) translateY(-5px); border-color: #fff; background: rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
+        /* --- DOWNLOAD MODAL (THE NEW PART) --- */
+        .download-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);
         }
-
-        .tech-item:nth-child(2) { animation-delay: 1s; }
-        .tech-item:nth-child(3) { animation-delay: 2s; }
-        .tech-item:nth-child(4) { animation-delay: 0.5s; }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
+        .download-card {
+            width: 90%; max-width: 400px; background: #0a0a0a; border: 1px solid var(--border);
+            padding: 3rem 2rem; border-radius: 20px; text-align: center;
+            transform: scale(0.9); transition: 0.4s;
         }
+        .download-overlay.active { display: flex; }
+        .download-overlay.active .download-card { transform: scale(1); }
 
-        footer { padding: 4rem 0; text-align: center; border-top: 1px solid var(--border-color); opacity: 0.6; font-size: 0.8rem; }
+        .loading-bar-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; margin: 2rem 0 1rem; display: none; }
+        .loading-bar-fill { width: 0%; height: 100%; background: #fff; box-shadow: 0 0 15px #fff; }
+        
+        .verify-box {
+            display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.03);
+            padding: 1rem; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 2rem; cursor: pointer;
+        }
+        .checkbox { width: 18px; height: 18px; border: 2px solid #333; border-radius: 4px; position: relative; }
+        .checkbox.checked { background: #fff; border-color: #fff; }
+        .checkbox.checked::after { content: '✓'; color: #000; font-size: 12px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        .status-txt { font-family: 'JetBrains Mono'; font-size: 0.65rem; color: #555; letter-spacing: 2px; text-transform: uppercase; }
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: #444; cursor: pointer; font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -108,117 +90,122 @@
             <nav>
                 <div class="logo"><div class="logo-dot"></div> PROVOID</div>
                 <ul class="nav-links">
-                    <li><a href="#features">Architecture</a></li>
-                    <li><a href="#tech">Technology</a></li>
-                    <li><a href="https://discord.gg/mG2QCJRTJK" target="_blank">GitHub</a></li>
+                    <li><a href="#architecture">Architecture</a></li>
+                    <li><a href="#technology">Technology</a></li>
+                    <li><a href="https://github.com/GhostExe-cloud/D-Lead" target="_blank">GitHub</a></li>
                     <li><a href="https://discord.gg/mG2QCJRTJK" target="_blank">Discord</a></li>
                 </ul>
-                <a href="#" class="btn btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">Download</a>
+                <button class="btn btn-primary" onclick="openDownload()" style="padding: 0.5rem 1.2rem; font-size: 0.85rem;">Download</button>
             </nav>
         </div>
     </header>
-    
+
     <section class="hero">
         <div class="container">
-            <h1>EXECUTE<br>WITHOUT LIMITS.</h1>
-            <p>High-performance task automation. Built for speed, designed for stability.</p>
-            
-            <div class="cta-group">
-                <a href="#" class="btn btn-primary">Download v2.0.4</a>
-                <a href="https://discord.gg/mG2QCJRTJK" class="btn btn-discord" target="_blank">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.069.069 0 0 0-.032.027C.533 9.048-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.196.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-                    Join Discord
-                </a>
-            </div>
-
-            <div class="preview-container">
-                <div class="slider-wrapper">
-                    <div class="slider-container" id="slider">
-                        <div class="slide active">
-                            <div class="slide-label">DASHBOARD INTERFACE</div>
-                            <img src="https://raw.githubusercontent.com/GhostExe-cloud/For-sites-vercel/main/image_2026-01-03_094545779.png" alt="Dashboard">
-                        </div>
-                        <div class="slide">
-                            <div class="slide-label">SCRIPT HUB</div>
-                            <img src="https://raw.githubusercontent.com/GhostExe-cloud/For-sites-vercel/main/image_2026-01-03_094617110.png" alt="Scripts">
-                        </div>
-                        <div class="slide">
-                            <div class="slide-label">LUA EDITOR</div>
-                            <img src="https://raw.githubusercontent.com/GhostExe-cloud/For-sites-vercel/main/image_2026-01-03_094726616.png" alt="Editor">
-                        </div>
-                    </div>
-                    <div class="slider-arrow prev" onclick="moveSlide(-1)">‹</div>
-                    <div class="slider-arrow next" onclick="moveSlide(1)">›</div>
-                </div>
-            </div>
+            <h1>EXECUTE WITH<br>ABSOLUTE POWER.</h1>
+            <p style="color: #888; margin-bottom: 2.5rem;">The next generation of task automation. Lightweight, secure, and undetectable.</p>
+            <button class="btn btn-primary" onclick="openDownload()">Get ProVoid v2.0.4</button>
         </div>
     </section>
 
-    <section class="tech-stack" id="tech">
+    <section class="tech-stack" id="technology">
         <div class="container">
             <h2 style="font-size: 2rem; letter-spacing: -1px;">Modern Tech Stack</h2>
             <div class="tech-items">
-                <div class="tech-item">WPF / WindowChrome</div>
+                <div class="tech-item">WPF / C#</div>
                 <div class="tech-item">Quorum API</div>
                 <div class="tech-item">Lua 5.1</div>
-                <div class="tech-item">.NET Framework</div>
+                <div class="tech-item">VMProtect</div>
             </div>
         </div>
     </section>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 PROVOID ARCHITECTURE. DEVELOPED BY GHOSTEXE.</p>
+    <div class="download-overlay" id="dl-overlay">
+        <div class="download-card">
+            <span class="close-btn" onclick="closeDownload()">×</span>
+            <h2 style="margin-bottom: 0.5rem; letter-spacing: -1px;">Secure Verification</h2>
+            <p style="color: #555; font-size: 0.8rem; margin-bottom: 2rem;">Authenticating user session for distribution...</p>
+
+            <div id="verify-area">
+                <div class="verify-box" onclick="toggleCheck()">
+                    <div class="checkbox" id="check-ui"></div>
+                    <span style="font-size: 0.8rem; color: #888;">I am not a robot</span>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="startSequence()">Begin Verification</button>
+            </div>
+
+            <div id="loading-area" style="display: none;">
+                <div class="loading-bar-bg" id="l-bar" style="display: block;">
+                    <div class="loading-bar-fill" id="fill"></div>
+                </div>
+                <div class="status-txt" id="status">Initializing...</div>
+            </div>
+
+            <a href="" id="final-link" class="btn btn-primary" style="display: none; width: 100%; justify-content: center; background: transparent; border: 1px solid #fff; color: #fff;">Download .EXE</a>
         </div>
-    </footer>
+    </div>
 
     <script>
-        // SNOW
+        // --- SNOW LOGIC ---
         const canvas = document.getElementById('snow-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         function initSnow() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
             particles = [];
-            for (let i = 0; i < 70; i++) {
-                particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 2 + 1, speed: Math.random() * 0.5 + 0.2 });
-            }
+            for (let i = 0; i < 50; i++) particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 2, speed: Math.random() * 0.5 + 0.1 });
         }
         function drawSnow() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-            ctx.beginPath();
-            particles.forEach(p => {
-                ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                p.y += p.speed; if (p.y > canvas.height) p.y = -5;
-            });
+            ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "rgba(255,255,255,0.2)"; ctx.beginPath();
+            particles.forEach(p => { ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2); p.y += p.speed; if (p.y > canvas.height) p.y = -5; });
             ctx.fill(); requestAnimationFrame(drawSnow);
         }
-        window.addEventListener('resize', initSnow);
         initSnow(); drawSnow();
 
-        // SLIDER WITH AUTO-ROTATE
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        let slideInterval;
+        // --- ENCRYPTION & DOWNLOAD LOGIC ---
+        let isChecked = false;
+        // Your Encrypted Link
+        const _0xLink = "aHR0cHM6Ly9naXRodWIuY29tL0dob3N0RXhlLWNsb3VkL0QtTGVhZC9yZWxlYXNlcy9kb3dubG9hZC92MS9Qcm9Wb2lkLnppcA==";
 
-        function moveSlide(step) {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + step + slides.length) % slides.length;
-            slides[currentSlide].classList.add('active');
-            resetTimer(); 
+        function openDownload() { document.getElementById('dl-overlay').classList.add('active'); }
+        function closeDownload() { document.getElementById('dl-overlay').classList.remove('active'); }
+        function toggleCheck() { isChecked = !isChecked; document.getElementById('check-ui').classList.toggle('checked'); }
+
+        function generateHash(l) {
+            let r = ''; const c = 'ABCDEF0123456789';
+            for (let i = 0; i < l; i++) r += c.charAt(Math.floor(Math.random() * c.length));
+            return r;
         }
 
-        function startTimer() {
-            slideInterval = setInterval(() => moveSlide(1), 5000);
-        }
+        function startSequence() {
+            if(!isChecked) return alert("Verify identity first.");
+            document.getElementById('verify-area').style.display = 'none';
+            document.getElementById('loading-area').style.display = 'block';
 
-        function resetTimer() {
-            clearInterval(slideInterval);
-            startTimer();
-        }
+            let p = 0;
+            const fill = document.getElementById('fill');
+            const status = document.getElementById('status');
+            const steps = ["HANDSHAKING...", "RSA_DECRYPT...", "BYPASSING_FILTERS...", "GENERATING_HASH...", "SUCCESS"];
 
-        startTimer();
+            const intv = setInterval(() => {
+                p += Math.random() * 1.8;
+                if(p > 100) p = 100;
+                fill.style.width = p + "%";
+                status.innerText = steps[Math.floor(p/21)];
+
+                if(p >= 100) {
+                    clearInterval(intv);
+                    setTimeout(() => {
+                        // URL Encrypt/Masking
+                        window.history.replaceState(null, null, `?verify=${generateHash(24)}&session=${generateHash(8)}`);
+                        document.getElementById('loading-area').style.display = 'none';
+                        const link = document.getElementById('final-link');
+                        link.href = atob(_0xLink); // Decodes GitHub URL
+                        link.style.display = 'flex';
+                    }, 600);
+                }
+            }, 40);
+        }
     </script>
 </body>
 </html>
