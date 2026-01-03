@@ -4,370 +4,191 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProVoid | Execute with Precision</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         :root {
-            --bg-color: #030303;
-            --text-color: #ffffff;
-            --accent-color: #ffffff; /* Clean White Accent */
-            --secondary-accent: #1a1a1a;
-            --card-bg: rgba(15, 15, 15, 0.6);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --glow: rgba(255, 255, 255, 0.05);
+            --bg: #050505;
+            --text: #ffffff;
+            --milk: #ffffff;
+            --glass: rgba(255, 255, 255, 0.05);
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
-        
+
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
 
-        /* Animated Background */
-        .bg-glow {
-            position: fixed;
+        /* --- THE LIQUID BAR AREA --- */
+        .download-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 900;
+            letter-spacing: -3px;
+            margin-bottom: 10px;
+            background: linear-gradient(to bottom, #fff 40%, #555);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .download-container {
+            position: relative;
+            margin-top: 40px;
+        }
+
+        /* The Animated Liquid Bar */
+        .liquid-bar {
+            position: relative;
+            width: 300px;
+            height: 80px;
+            background: var(--glass);
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            filter: url('#goo'); /* Applies the liquid effect */
+            overflow: hidden;
+        }
+
+        /* The Milk Waves */
+        .liquid-fill {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
-                radial-gradient(circle at 50% -20%, rgba(255,255,255,0.08) 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, rgba(255,255,255,0.03) 0%, transparent 40%);
-            z-index: -1;
-            pointer-events: none;
+            background: var(--milk);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(70%); /* Lower this to show more/less "milk" */
+            z-index: 1;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-        
-        /* Header */
-        header {
-            padding: 2rem 0;
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo-dot {
-            width: 8px;
-            height: 8px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 15px #fff;
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2.5rem;
-        }
-        
-        .nav-links a {
-            color: #888;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-links a:hover {
-            color: #fff;
-        }
-        
-        .download-nav-btn {
+        .download-btn {
+            position: relative;
+            z-index: 10;
             background: #fff;
             color: #000;
             border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        
-        .download-nav-btn:hover {
-            transform: scale(1.05);
-        }
-        
-        /* Hero Section */
-        .hero {
-            padding: 8rem 0 4rem;
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: clamp(3rem, 8vw, 5rem);
-            font-weight: 800;
-            letter-spacing: -3px;
-            line-height: 1;
-            margin-bottom: 1.5rem;
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            color: #888;
-            max-width: 600px;
-            margin: 0 auto 3rem auto;
-        }
-        
-        .main-cta {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 1.2rem 2.5rem;
-            border-radius: 12px;
+            padding: 15px 40px;
+            border-radius: 30px;
             font-weight: 800;
             font-size: 1.1rem;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .main-cta:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(255,255,255,0.1);
-        }
-        
-        .version-tag {
-            display: block;
-            margin-top: 1rem;
-            color: #444;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-        }
-
-        /* Mockup Window */
-        .preview-container {
-            margin-top: 5rem;
-            position: relative;
-            padding: 10px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .mockup-img {
-            width: 100%;
-            border-radius: 12px;
-            display: block;
-            filter: grayscale(1); /* Matches your ProVoid theme */
-            transition: filter 0.5s ease;
-        }
-
-        .preview-container:hover .mockup-img {
-            filter: grayscale(0);
-        }
-
-        /* Features */
-        .features {
-            padding: 10rem 0;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .feature-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2.5rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-        
-        .feature-card:hover {
-            border-color: rgba(255,255,255,0.3);
-            background: rgba(20,20,20,0.8);
-        }
-        
-        .feature-icon {
-            margin-bottom: 1.5rem;
-            color: #fff;
-        }
-        
-        .feature-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-        }
-        
-        .feature-card p {
-            color: #666;
-            font-size: 0.95rem;
-        }
-        
-        /* Stats */
-        .stats-bar {
+            transition: transform 0.2s;
             display: flex;
-            justify-content: space-around;
-            padding: 4rem 0;
-            border-top: 1px solid var(--border-color);
-            margin-top: 4rem;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
         }
 
-        .stat-item h2 { font-size: 2.5rem; font-weight: 800; }
-        .stat-item p { color: #555; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px; }
-
-        footer {
-            padding: 4rem 0;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-            color: #444;
-            font-size: 0.8rem;
+        .download-btn:hover {
+            transform: scale(1.05);
         }
 
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .hero h1 { font-size: 3.5rem; }
-            .stats-bar { flex-direction: column; gap: 2rem; }
+        /* Stats Text */
+        .stats-wrapper {
+            margin-top: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #666;
         }
+
+        #download-count {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Liquid Distortion Filter */
+        svg { width: 0; height: 0; position: absolute; }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow"></div>
+    <svg>
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+          <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+      </defs>
+    </svg>
 
-    <header>
-        <div class="container">
-            <nav>
-                <div class="logo">
-                    <div class="logo-dot"></div>
-                    PROVOID
-                </div>
-                <ul class="nav-links">
-                    <li><a href="#features">Architecture</a></li>
-                    <li><a href="#">API docs</a></li>
-                    <li><a href="#">Github</a></li>
-                    <li><a href="#">Discord</a></li>
-                </ul>
-                <button class="download-nav-btn">Download</button>
-            </nav>
-        </div>
-    </header>
-    
-    <section class="hero">
-        <div class="container">
-            <h1 data-aos="fade-up" data-aos-duration="1000">EXECUTE<br>WITHOUT LIMITS.</h1>
-            <p data-aos="fade-up" data-aos-delay="200">
-                The next evolution in task automation. Built for speed, designed for stability, and optimized for the modern power user.
-            </p>
+    <div class="download-zone">
+        <h1 class="hero-title">PROVOID</h1>
+        <p style="color: #888;">Execute with Precision.</p>
+
+        <div class="download-container">
+            <div class="liquid-bar">
+                <div class="liquid-fill" id="milk-fill"></div>
+            </div>
             
-            <div data-aos="zoom-in" data-aos-delay="400">
-                <button class="main-cta">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-                    </svg>
-                    Download ProVoid
-                </button>
-                <span class="version-tag">v2.0.4-stable | Windows 10/11</span>
-            </div>
-
-            <div class="preview-container" data-aos="fade-up" data-aos-offset="300">
-                <img src="/api/placeholder/1200/700" alt="ProVoid Interface" class="mockup-img" />
-            </div>
+            <a href="#" class="download-btn" onclick="startDownload(event)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                DOWNLOAD NOW
+            </a>
         </div>
-    </section>
-    
-    <section class="features" id="features">
-        <div class="container">
-            <div class="features-grid">
-                <div class="feature-card" data-aos="fade-up">
-                    <div class="feature-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                            <line x1="8" y1="21" x2="16" y2="21"/>
-                            <line x1="12" y1="17" x2="12" y2="21"/>
-                        </svg>
-                    </div>
-                    <h3>Modern UI/UX</h3>
-                    <p>Built with WindowChrome for a seamless, borderless experience that integrates perfectly with your desktop.</p>
-                </div>
 
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="feature-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                    </div>
-                    <h3>Ultra-Fast API</h3>
-                    <p>Leveraging the Quorum API for industry-leading execution speeds and minimal resource footprint.</p>
-                </div>
-
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                    </div>
-                    <h3>Ironclad Security</h3>
-                    <p>Encrypted environment ensuring your scripts and data remain private and secure at all times.</p>
-                </div>
-            </div>
-
-            <div class="stats-bar" data-aos="fade-in">
-                <div class="stat-item">
-                    <h2>2.4ms</h2>
-                    <p>Avg Response Time</p>
-                </div>
-                <div class="stat-item">
-                    <h2>100+</h2>
-                    <p>Pre-built Modules</p>
-                </div>
-                <div class="stat-item">
-                    <h2>0%</h2>
-                    <p>Crash Rate</p>
-                </div>
-            </div>
+        <div class="stats-wrapper">
+            LIVE DOWNLOADS: <span id="download-count">Calculating...</span>
         </div>
-    </section>
+    </div>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 PROVOID ARCHITECTURE. ALL RIGHTS RESERVED.</p>
-            <p style="margin-top: 10px; opacity: 0.5;">Not affiliated with Microsoft or Valve.</p>
-        </div>
-    </footer>
-
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({
-            once: true,
-            duration: 800
-        });
+        // --- 1. CONFIGURATION ---
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const EXE_URL = 'YOUR_DIRECT_LINK_TO_PROVOID.EXE';
+
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // --- 2. UPDATE DISPLAY ---
+        async function updateStats() {
+            const { count } = await supabase
+                .from('download_stats')
+                .select('*', { count: 'exact', head: true });
+            
+            document.getElementById('download-count').innerText = count.toLocaleString();
+            
+            // Subtle liquid animation: the milk rises slightly as downloads increase
+            const fillLevel = Math.max(70 - (count / 10), 40); // Caps at 40% height
+            document.getElementById('milk-fill').style.transform = `translateY(${fillLevel}%)`;
+        }
+
+        // --- 3. DOWNLOAD LOGIC ---
+        async function startDownload(e) {
+            e.preventDefault();
+            
+            // Call your Vercel API to log the unique IP
+            fetch('/api/increment');
+
+            // Start file download
+            window.location.href = EXE_URL;
+        }
+
+        // --- 4. REALTIME LISTENER ---
+        supabase
+            .channel('db_changes')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'download_stats' }, () => {
+                updateStats(); // Ticks up instantly when anyone in the world downloads
+            })
+            .subscribe();
+
+        // Initial fetch
+        updateStats();
     </script>
 </body>
 </html>
