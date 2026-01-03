@@ -4,218 +4,826 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProVoid | Execute with Precision</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-color: #030303;
+            --text-color: #ffffff;
+            --accent-color: #ffffff;
+            --secondary-accent: #1a1a1a;
+            --card-bg: rgba(15, 15, 15, 0.6);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glow: rgba(255, 255, 255, 0.05);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
         
         body {
-            background: #020202;
-            color: #fff;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* --- THE SNOW --- */
-        #snowCanvas {
+        /* Animated Background with Particles */
+        .bg-glow {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: 
+                radial-gradient(circle at 50% -20%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(255,255,255,0.03) 0%, transparent 40%);
+            z-index: -1;
             pointer-events: none;
-            z-index: 1;
         }
 
-        /* --- THE LAYOUT --- */
-        .content {
-            position: relative;
-            z-index: 10;
-            text-align: center;
+        .particle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
         }
 
-        .title {
-            font-size: clamp(4rem, 15vw, 8rem);
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        /* Header */
+        header {
+            padding: 2rem 0;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(3, 3, 3, 0.8);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
             font-weight: 800;
-            letter-spacing: -4px;
-            background: linear-gradient(180deg, #ffffff 0%, #333333 100%);
+            letter-spacing: -1px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: translateX(5px);
+        }
+
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #fff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+        
+        .nav-links a {
+            color: #888;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .download-nav-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .download-nav-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .download-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 8rem 0 4rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(180deg, #fff 0%, #888 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out;
         }
 
-        .subtitle {
-            font-size: 0.9rem;
-            letter-spacing: 5px;
-            color: #666;
-            text-transform: uppercase;
-            margin-bottom: 40px;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-
-        /* --- THE LIQUID BAR --- */
-        .liquid-container {
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: #888;
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+        
+        .main-cta {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
             position: relative;
-            width: 320px;
-            height: 80px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 40px;
             overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .main-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .main-cta:hover::before {
+            left: 100%;
+        }
+        
+        .main-cta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255,255,255,0.2);
+        }
+
+        .main-cta svg {
+            transition: transform 0.3s ease;
+        }
+
+        .main-cta:hover svg {
+            transform: translateY(3px);
+        }
+        
+        .version-tag {
+            display: block;
+            margin-top: 1rem;
+            color: #444;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        /* Mockup Window */
+        .preview-container {
+            margin-top: 5rem;
+            position: relative;
+            padding: 10px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 1s ease-out 0.8s both;
+            transition: all 0.5s ease;
+        }
+
+        .preview-container:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .mockup-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
         }
 
-        .milk-wave {
+        .mockup-placeholder::before {
+            content: '';
             position: absolute;
-            bottom: 0;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .mockup-text {
+            position: relative;
+            z-index: 1;
+            font-family: 'JetBrains Mono', monospace;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        /* Features */
+        .features {
+            padding: 10rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
             left: 0;
             width: 100%;
-            background: #ffffff;
             height: 100%;
-            transform: translateY(85%); /* The fill level */
-            transition: transform 2s cubic-bezier(0.23, 1, 0.32, 1);
-            z-index: 1;
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .download-btn {
-            position: relative;
-            z-index: 5;
-            background: #ffffff;
-            color: #000;
-            text-decoration: none;
-            padding: 14px 35px;
-            border-radius: 30px;
-            font-weight: 800;
-            font-size: 1rem;
-            transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .feature-card:hover::before {
+            opacity: 1;
         }
-
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255,255,255,0.1);
+        
+        .feature-card:hover {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(20,20,20,0.8);
+            transform: translateY(-10px);
         }
-
-        /* --- THE STATS --- */
-        .stats-box {
-            margin-top: 30px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .stats-label {
-            color: #444;
-            font-size: 0.7rem;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .stats-number {
-            font-size: 1.8rem;
-            font-weight: 500;
+        
+        .feature-icon {
+            margin-bottom: 1.5rem;
             color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-card p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* Tech Stack Section */
+        .tech-stack {
+            padding: 8rem 0;
+            text-align: center;
+        }
+
+        .tech-items {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .tech-item {
+            padding: 1rem 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-5px);
+        }
+        
+        /* Stats */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 4rem 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item h2 { 
+            font-size: 2.5rem; 
+            font-weight: 800;
+            background: linear-gradient(180deg, #fff 0%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-item p { 
+            color: #555; 
+            text-transform: uppercase; 
+            font-size: 0.7rem; 
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 8rem 0;
+            text-align: center;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-box h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-box p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        footer {
+            padding: 4rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: #444;
+            font-size: 0.8rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .hero h1 { font-size: 3.5rem; }
+            .stats-bar { flex-direction: column; gap: 2rem; }
+            .tech-items { gap: 1rem; }
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .scroll-top.visible {
+            display: flex;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <canvas id="snowCanvas"></canvas>
+    <div class="bg-glow"></div>
 
-    <div class="content">
-        <h1 class="title">PROVOID</h1>
-        <p class="subtitle">Execute with Precision</p>
-
-        <div class="liquid-container">
-            <div class="milk-wave" id="milkFill"></div>
-            <a href="#" class="download-btn" onclick="startDownload(event)">DOWNLOAD NOW</a>
+    <header id="header">
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <div class="logo-dot"></div>
+                    PROVOID
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#features">Architecture</a></li>
+                    <li><a href="#tech">Technology</a></li>
+                    <li><a href="https://github.com" target="_blank">Github</a></li>
+                    <li><a href="https://discord.com" target="_blank">Discord</a></li>
+                </ul>
+                <button class="download-nav-btn" onclick="handleDownload()">Download</button>
+                <button class="mobile-menu-btn">☰</button>
+            </nav>
         </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>EXECUTE<br>WITHOUT LIMITS.</h1>
+            <p>
+                The next evolution in task automation. Built for speed, designed for stability, and optimized for the modern power user.
+            </p>
+            
+            <div>
+                <button class="main-cta" onclick="handleDownload()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                    </svg>
+                    Download ProVoid
+                </button>
+                <span class="version-tag">v2.0.4-stable | Windows 10/11</span>
+            </div>
 
-        <div class="stats-box">
-            <span class="stats-label">GLOBAL DEPLOYMENTS</span>
-            <div class="stats-number" id="count">000</div>
+            <div class="preview-container">
+                <div class="mockup-placeholder">
+                    <span class="mockup-text">[ PROVOID INTERFACE ]</span>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+    
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Built for Performance</h2>
+                <p>Every feature engineered for maximum efficiency</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <h3>Modern UI/UX</h3>
+                    <p>Built with WindowChrome for a seamless, borderless experience that integrates perfectly with your desktop.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <h3>Ultra-Fast API</h3>
+                    <p>Leveraging the Quorum API for industry-leading execution speeds and minimal resource footprint.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>Ironclad Security</h3>
+                    <p>Encrypted environment ensuring your scripts and data remain private and secure at all times.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                    </div>
+                    <h3>Zero Downtime</h3>
+                    <p>Rock-solid stability with automatic error recovery and failsafe mechanisms built into the core.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>Real-Time Sync</h3>
+                    <p>Instant synchronization across all your devices with cloud-based profile management.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                    </div>
+                    <h3>Advanced Scripting</h3>
+                    <p>Full Lua 5.1 support with extensive libraries and custom modules for limitless automation.</p>
+                </div>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <h2>2.4ms</h2>
+                    <p>Avg Response Time</p>
+                </div>
+                <div class="stat-item">
+                    <h2>100+</h2>
+                    <p>Pre-built Modules</p>
+                </div>
+                <div class="stat-item">
+                    <h2>0%</h2>
+                    <p>Crash Rate</p>
+                </div>
+                <div class="stat-item">
+                    <h2>24/7</h2>
+                    <p>Support Available</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="tech-stack" id="tech">
+        <div class="container">
+            <div class="section-header">
+                <h2>Built with Modern Technology</h2>
+                <p>Powered by industry-leading frameworks and tools</p>
+            </div>
+
+            <div class="tech-items">
+                <div class="tech-item">WPF / WindowChrome</div>
+                <div class="tech-item">Quorum API</div>
+                <div class="tech-item">Lua 5.1</div>
+                <div class="tech-item">.NET Framework</div>
+                <div class="tech-item">AES-256 Encryption</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Ready to Execute?</h2>
+                <p>Join thousands of users who've upgraded their automation workflow with ProVoid.</p>
+                <button class="main-cta" onclick="handleDownload()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                    </svg>
+                    Get Started Now
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">Documentation</a>
+                <a href="#">API Reference</a>
+                <a href="#">Community</a>
+                <a href="#">Changelog</a>
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+            </div>
+            <p>&copy; 2024 PROVOID ARCHITECTURE. ALL RIGHTS RESERVED.</p>
+            <p style="margin-top: 10px; opacity: 0.5;">Not affiliated with Microsoft or Valve.</p>
+        </div>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
 
     <script>
-        // --- 1. CONFIG (Replace these) ---
-        const SB_URL = 'YOUR_SUPABASE_URL';
-        const SB_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const EXE_URL = 'YOUR_EXE_LINK';
-
-        const supabase = supabase.createClient(SB_URL, SB_KEY);
-
-        // --- 2. THE SNOW SYSTEM (Canvas is smoother) ---
-        const canvas = document.getElementById('snowCanvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.onresize = resize;
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 1;
-                this.speed = Math.random() * 1 + 0.5;
-                this.velY = this.speed;
-                this.velX = Math.random() * 0.5 - 0.25;
-            }
-            update() {
-                this.y += this.velY;
-                this.x += this.velX;
-                if (this.y > canvas.height) this.y = -10;
-            }
-            draw() {
-                ctx.fillStyle = 'rgba(255,255,255,0.5)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+        // Particle animation
+        function createParticles() {
+            const particleCount = 50;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animation = `float ${5 + Math.random() * 10}s linear infinite`;
+                document.body.appendChild(particle);
             }
         }
 
-        for(let i=0; i<100; i++) particles.push(new Particle());
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // --- 3. THE LIVE STATS LOGIC ---
-        async function updateStats() {
-            const { count } = await supabase.from('download_stats').select('*', { count: 'exact', head: true });
-            if (count !== null) {
-                document.getElementById('count').innerText = count.toLocaleString().padStart(3, '0');
-                
-                // Rise the milk level (85% is bottom, 10% is top)
-                const level = Math.max(85 - (count * 1), 10);
-                document.getElementById('milkFill').style.transform = `translateY(${level}%)`;
+        // Add floating animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+                25% { transform: translateY(-20px) translateX(10px); opacity: 0.6; }
+                50% { transform: translateY(-40px) translateX(-10px); opacity: 0.3; }
+                75% { transform: translateY(-20px) translateX(10px); opacity: 0.6; }
             }
+        `;
+        document.head.appendChild(style);
+
+        createParticles();
+
+        // Scroll effects
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            const scrollTop = document.getElementById('scrollTop');
+            
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+                scrollTop.classList.add('visible');
+            } else {
+                header.classList.remove('scrolled');
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        async function startDownload(e) {
-            e.preventDefault();
-            fetch('/api/increment'); // Hits your Vercel IP Scanner
-            window.location.href = EXE_URL;
+        function handleDownload() {
+            alert('Download initiated! In production, this would link to your release page.');
+            // In production: window.location.href = 'your-download-link';
         }
 
-        // Live Realtime listener
-        supabase.channel('public:download_stats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'download_stats' }, updateStats).subscribe();
-        
-        updateStats(); // Run on load
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
     </script>
 </body>
 </html>
