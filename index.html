@@ -4,191 +4,245 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProVoid | Execute with Precision</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         :root {
-            --bg: #050505;
-            --text: #ffffff;
-            --milk: #ffffff;
-            --glass: rgba(255, 255, 255, 0.05);
+            --bg: #030303;
+            --accent: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            margin: 0;
             background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* --- THE LIQUID BAR AREA --- */
-        .download-zone {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-        }
-
-        .hero-title {
-            font-size: 5rem;
-            font-weight: 900;
-            letter-spacing: -3px;
-            margin-bottom: 10px;
-            background: linear-gradient(to bottom, #fff 40%, #555);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .download-container {
-            position: relative;
-            margin-top: 40px;
-        }
-
-        /* The Animated Liquid Bar */
-        .liquid-bar {
-            position: relative;
-            width: 300px;
-            height: 80px;
-            background: var(--glass);
-            border-radius: 40px;
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            filter: url('#goo'); /* Applies the liquid effect */
+            min-height: 100vh;
             overflow: hidden;
         }
 
-        /* The Milk Waves */
-        .liquid-fill {
+        /* Abstract Background Glows */
+        .glow {
             position: absolute;
-            top: 0;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .hero-title {
+            font-size: clamp(3.5rem, 12vw, 6.5rem);
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .sub-text {
+            color: #777;
+            font-size: 1.1rem;
+            margin-bottom: 50px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        /* --- THE LIQUID BUTTON SYSTEM --- */
+        .liquid-wrapper {
+            position: relative;
+            width: 320px;
+            height: 90px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: url('#gooey'); /* The Magic Filter */
+        }
+
+        .liquid-container {
+            position: absolute;
+            inset: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 45px;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .milk-fill {
+            position: absolute;
+            bottom: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--milk);
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateY(70%); /* Lower this to show more/less "milk" */
-            z-index: 1;
+            background: #fff;
+            transform: translateY(82%); /* Default level */
+            transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .download-btn {
             position: relative;
-            z-index: 10;
+            z-index: 5;
             background: #fff;
             color: #000;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 30px;
+            padding: 18px 45px;
+            border-radius: 40px;
             font-weight: 800;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: transform 0.2s;
+            font-size: 1rem;
+            text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 10px;
-            text-decoration: none;
+            gap: 12px;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .download-btn:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255,255,255,0.1);
         }
 
-        /* Stats Text */
-        .stats-wrapper {
-            margin-top: 20px;
+        /* Stats Section */
+        .stats-area {
+            margin-top: 40px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            color: #666;
+            animation: fadeInUp 1s ease-out 0.5s both;
         }
 
-        #download-count {
+        .stats-label {
+            color: #444;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .count-number {
+            font-size: 1.5rem;
+            font-weight: 500;
             color: #fff;
-            font-weight: bold;
         }
 
-        /* Liquid Distortion Filter */
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
         svg { width: 0; height: 0; position: absolute; }
     </style>
 </head>
 <body>
 
-    <svg>
-      <defs>
-        <filter id="goo">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
-          <feBlend in="SourceGraphic" in2="goo" />
-        </filter>
-      </defs>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+            <filter id="gooey">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+            </filter>
+        </defs>
     </svg>
 
-    <div class="download-zone">
-        <h1 class="hero-title">PROVOID</h1>
-        <p style="color: #888;">Execute with Precision.</p>
+    <div class="glow"></div>
 
-        <div class="download-container">
-            <div class="liquid-bar">
-                <div class="liquid-fill" id="milk-fill"></div>
+    <div class="main-container">
+        <h1 class="hero-title">PROVOID</h1>
+        <p class="sub-text">Execute with Precision</p>
+
+        <div class="liquid-wrapper">
+            <div class="liquid-container">
+                <div class="milk-fill" id="milk-fill"></div>
             </div>
             
-            <a href="#" class="download-btn" onclick="startDownload(event)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            <a href="#" class="download-btn" onclick="handleDownload(event)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 DOWNLOAD NOW
             </a>
         </div>
 
-        <div class="stats-wrapper">
-            LIVE DOWNLOADS: <span id="download-count">Calculating...</span>
+        <div class="stats-area">
+            <span class="stats-label">Live Deployments</span>
+            <span class="count-number" id="download-count">——</span>
         </div>
     </div>
 
     <script>
-        // --- 1. CONFIGURATION ---
+        // --- 1. SETTINGS ---
         const SUPABASE_URL = 'YOUR_SUPABASE_URL';
         const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const EXE_URL = 'YOUR_DIRECT_LINK_TO_PROVOID.EXE';
+        const EXE_LINK = 'YOUR_DIRECT_EXE_LINK';
 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- 2. UPDATE DISPLAY ---
-        async function updateStats() {
-            const { count } = await supabase
+        // --- 2. LOGIC ---
+        async function fetchAndUpdateStats() {
+            const { count, error } = await supabase
                 .from('download_stats')
                 .select('*', { count: 'exact', head: true });
-            
-            document.getElementById('download-count').innerText = count.toLocaleString();
-            
-            // Subtle liquid animation: the milk rises slightly as downloads increase
-            const fillLevel = Math.max(70 - (count / 10), 40); // Caps at 40% height
-            document.getElementById('milk-fill').style.transform = `translateY(${fillLevel}%)`;
+
+            if (!error) {
+                const countElem = document.getElementById('download-count');
+                const fillElem = document.getElementById('milk-fill');
+                
+                countElem.innerText = count.toLocaleString();
+                
+                // Adjust the milk level based on downloads
+                // (Starts at 82% translated Y, moves up to 40% Y)
+                let newLevel = Math.max(82 - (count * 0.5), 40); 
+                fillElem.style.transform = `translateY(${newLevel}%)`;
+            }
         }
 
-        // --- 3. DOWNLOAD LOGIC ---
-        async function startDownload(e) {
+        async function handleDownload(e) {
             e.preventDefault();
             
-            // Call your Vercel API to log the unique IP
+            // Hit the Vercel API we created in api/increment.js
             fetch('/api/increment');
 
-            // Start file download
-            window.location.href = EXE_URL;
+            // Start actual download
+            window.location.href = EXE_LINK;
         }
 
-        // --- 4. REALTIME LISTENER ---
+        // --- 3. REALTIME SYNC ---
+        // This makes the number change live for everyone without refreshing
         supabase
-            .channel('db_changes')
+            .channel('stats-changes')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'download_stats' }, () => {
-                updateStats(); // Ticks up instantly when anyone in the world downloads
+                fetchAndUpdateStats();
             })
             .subscribe();
 
-        // Initial fetch
-        updateStats();
+        // Initial Load
+        fetchAndUpdateStats();
     </script>
 </body>
 </html>
