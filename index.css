@@ -1,0 +1,21 @@
+/* Update these specific parts in your CSS */
+.snow-container {
+    position: fixed; /* Ensures it stays on screen */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999; /* Higher than everything else */
+    overflow: hidden;
+}
+
+.snowflake {
+    position: absolute;
+    top: -20px; /* Start slightly off-screen */
+    color: #ffffff;
+    user-select: none;
+    pointer-events: none;
+    z-index: 9999;
+    animation: fall linear infinite;
+}
